@@ -1,9 +1,10 @@
-package main
+package user
 
 import (
-	user "N-video/models"
 	"encoding/json"
 	"strconv"
+
+	user "N-video/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,19 +13,7 @@ var (
 	person user.User
 )
 
-func router(router *gin.Engine) *gin.Engine {
-	v1 := router.Group("/api/v1")
-	{
-		user_info := v1.Group("/user_info")
-		{
-			user_info.GET("/userinfo", get_user_info_handler)
-			user_info.POST("/modifyInfo", updae_user_info_handler)
-			user_info.DELETE("/:id", delete_user_info_handler)
-		}
-	}
-	return router
-}
-func get_user_info_handler(c *gin.Context) {
+func Get_user_info_handler(c *gin.Context) {
 	uid, _ := strconv.Atoi(c.Query("uid"))
 	u, err := person.GetUserInfo(uid)
 	if err == nil {
@@ -34,15 +23,19 @@ func get_user_info_handler(c *gin.Context) {
 	}
 }
 
-func updae_user_info_handler(c *gin.Context) {
+func Updae_user_info_handler(c *gin.Context) {
 	json.Unmarshal([]byte(c.PostForm("user")), &person)
 	state(person.UpdateUserInfo(person), c)
 }
 
-func delete_user_info_handler(c *gin.Context) {
+func Delete_user_info_handler(c *gin.Context) {
 	uid, _ := strconv.Atoi(c.Param("uid"))
 	res := person.DeleteUser(uid)
 	state(res, c)
+
+}
+
+func Get_video_folder_handler(c *gin.Context) {
 
 }
 

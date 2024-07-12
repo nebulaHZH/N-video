@@ -1,31 +1,26 @@
 package models
 
-import "github.com/gin-gonic/gin"
+import (
+	mysql "N-video/utils"
+
+	"gorm.io/gorm"
+)
+
+var db *gorm.DB
 
 type User struct {
-	Uid            int      `json:"uid"`            //用户id
-	Username       string   `json:"username"`       //用户名
-	Sex            string   `json:"sex"`            //性别
-	Background     string   `json:"background"`     //背景
-	Avatar         string   `json:"avatar"`         //头像
-	Intrduction    string   `json:"moto"`           //简介
-	Truename       string   `json:"truename"`       //真实名
-	Password       string   `json:"password"`       //密码
-	IsVIP          bool     `json:"isVIP"`          //是否为vip
-	History        []string `json:"history"`        //浏览历史
-	Followed       []string `json:"followed"`       //关注的人
-	Authors        Authors  `json:"authors"`        //创作者身份
-	FavoriteVideos []string `json:"favoriteVideos"` //喜欢的视频
+	Uid         int    `json:"uid"`        //用户id
+	Username    string `json:"username"`   //用户名
+	Sex         string `json:"sex"`        //性别
+	Background  string `json:"background"` //背景
+	Avatar      string `json:"avatar"`     //头像
+	Intrduction string `json:"moto"`       //简介
+	Truename    string `json:"truename"`   //真实名
+	Password    string `json:"password"`   //密码
+	IsVIP       bool   `json:"isVIP"`      //是否为vip
 }
-
-type Authors struct {
-	Uid         int      `json:"uid"`       //用户id
-	VideoFolder []Videos `json:"works"`     //视频集
-	Followers   []string `json:"followers"` //关注者
-}
-
 type Person interface {
-	GetUserInfo(c *gin.Context) (User, error)      //获取用户信息
+	GetUserInfo(uid int) (User, error)             //获取用户信息
 	UpdateUserInfo(user User) bool                 //更新用户信息
 	DeleteUser(uid int) bool                       //删除用户
 	AddUser(user User) bool                        //添加用户
@@ -37,7 +32,16 @@ type Person interface {
 	GetHistory(uid int) ([]Videos, error)          //获取用户历史记录
 }
 
+func init() {
+	db = mysql.GetDB()
+}
+
+// 在定义模型时指定表名为 "user"
+func (User) TableName() string {
+	return "user"
+}
 func (u *User) GetUserInfo(uid int) (User, error) {
+	db.First(&u, uid)
 	return *u, nil
 }
 func (u *User) UpdateUserInfo(user User) bool {
@@ -46,7 +50,8 @@ func (u *User) UpdateUserInfo(user User) bool {
 func (u *User) DeleteUser(uid int) bool {
 	return true
 }
-func (u *User) AddUser(user User) bool {
+func (u *User) AddUser() bool {
+	db.Create(&u)
 	return true
 }
 func (u *User) GetAuthors(uid int) (Authors, error) {
