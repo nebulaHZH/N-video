@@ -1,7 +1,7 @@
 package main
 
 import (
-	router "N-video/router"
+	"N-video/router"
 	_ "N-video/utils" //自动执行mysql连接
 	"fmt"
 

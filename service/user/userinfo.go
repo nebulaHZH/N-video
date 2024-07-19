@@ -1,48 +1,52 @@
 package user
 
 import (
-	"encoding/json"
-	"strconv"
-
-	user "N-video/models"
-
-	"github.com/gin-gonic/gin"
+	"N-video/models"
 )
 
-var (
-	person user.User
-)
+func GetUserInfo(uid int) models.User {
+	u, _ := person.GetUserInfo(uid)
+	return u
+}
 
-func Get_user_info_handler(c *gin.Context) {
-	uid, _ := strconv.Atoi(c.Query("uid"))
-	u, err := person.GetUserInfo(uid)
-	if err == nil {
-		c.JSON(200, u)
-	} else {
-		c.JSON(400, gin.H{"error": "user not found"})
+func UpdateUserInfo(user models.User) models.User {
+	user.UpdateUserInfo()
+	// if update sucess , we can find it by GetuserInfo function
+	return GetUserInfo(user.Uid)
+}
+
+func DeleteUserInfo(uid int) models.User {
+	person.DeleteUser(uid)
+	return GetUserInfo(uid)
+}
+
+// service : get followed by user's id
+func GetFollowed(uid int) []models.User {
+	f_list := followed.Get("uid", uid)
+	var user_list []models.User
+	for item := range f_list {
+		u, _ := person.GetUserInfo(f_list[item].Followed)
+		user_list = append(user_list, u)
 	}
+	return user_list
 }
 
-func Updae_user_info_handler(c *gin.Context) {
-	json.Unmarshal([]byte(c.PostForm("user")), &person)
-	state(person.UpdateUserInfo(person), c)
-}
-
-func Delete_user_info_handler(c *gin.Context) {
-	uid, _ := strconv.Atoi(c.Param("uid"))
-	res := person.DeleteUser(uid)
-	state(res, c)
-
-}
-
-func Get_video_folder_handler(c *gin.Context) {
-
-}
-
-func state(res bool, c *gin.Context) {
-	if res {
-		c.JSON(200, gin.H{"status": "success"})
-	} else {
-		c.JSON(400, gin.H{"status": "fail"})
+// service : get follower by user's id
+func GetFollower(uid int) []models.User {
+	follower_list := followed.Get("fid", uid)
+	var followers []models.User
+	for item := range follower_list {
+		u, _ := person.GetUserInfo(follower_list[item].Uid)
+		followers = append(followers, u)
 	}
+	return followers
+}
+
+// service : cancel followed
+func CancelFollow(uid, fid int) bool {
+	followed = models.FollowedImpl{Uid: uid, Followed: fid}
+	followed.Delete()
+	// judge if success to cancel
+	res := followed.Get("uid", uid)
+	return len(res) == 0
 }

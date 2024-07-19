@@ -1,44 +1,29 @@
 package user
 
 import (
-	user "N-video/models"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
+	"N-video/models"
 )
 
-func Login_handler(c *gin.Context) {
-	uid, _ := strconv.Atoi(c.PostForm("uid"))
-	password := c.PostForm("password")
-	// 调用model 方法操纵数据库
-	person := user.User{Uid: uid, Password: password}
-	p, err := person.GetUserInfo(uid)
-	if err != nil {
-		if p.Password == password {
-			c.JSON(200, gin.H{
-				"code": 200,
-				"msg":  "登录成功",
-			})
-		} else {
-			c.JSON(200, gin.H{
-				"code": 400,
-				"msg":  "密码错误",
-			})
-		}
-	} else {
-		c.JSON(200, gin.H{
-			"code": 400,
-			"msg":  "用户不存在",
-		})
+// service: valid user's login
+func Login(uid int, password string) bool {
+	res := log.Valid(uid, password)
+	return res.Uid != 0
+}
+
+// service: register account
+func Register(user models.User, password string) bool {
+	logImpl := models.LogImpl{Uid: user.Uid, Password: password}
+	var log models.Log = logImpl
+	res, l := user.AddUser(), log.Create()
+	if res.Uid != 0 && l.Uid != 0 {
+		return true
 	}
-}
-func Rregister_handler(c *gin.Context) {
-	//将post传来的json转为结构体
-	person := user.User{}
-	c.BindJSON(&person)
-	person.AddUser()
+	return false
 }
 
-func Modify_password_handler(c *gin.Context) {
-
+// service: modify user's password
+func ModifyPsd(uid int, password string) bool {
+	log.UpdatePassword(uid, password)
+	person := log.Valid(uid, password)
+	return person.Uid != 0
 }

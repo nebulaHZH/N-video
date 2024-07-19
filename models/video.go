@@ -1,6 +1,6 @@
 package models
 
-type Video struct {
+type VideoImpl struct {
 	Vid           string    `json:"vid"`           //视频id
 	Title         string    `json:"title"`         //标题
 	Uid           int       `json:"uid"`           //作者id
@@ -13,34 +13,42 @@ type Video struct {
 	IsNeedVIP     bool      `json:"isNeedVip"`     //是否需要vip
 	Comments      []Comment `json:"comments"`      //评论实体
 }
-type Videos struct {
-	Fid    string  `json:"fid"`    //视频集id
-	Uid    int     `json:"uid"`    //用户id
-	Videos []Video `json:"videos"` //视频列表
+type VideosImpl struct {
+	Fid   string `json:"fid"`   //视频集id
+	Fname string `json:"fname"` //视频集名称
+	Uid   int    `json:"uid"`   //用户id
+	Vid   string `json:"vid"`   //视频id列表
 }
 
-type VideoInter interface {
-	GetVideoInfo(vid string) (Video, error)
-	GetComments(vid []string) ([]Comment, error)
+type Video interface {
+	GetVideo() VideoImpl
+	UploadVideo() bool
+	DeleteVideo()
 }
-type VideosFolder interface {
-	GetVideoFolder(fid string) (Videos, error)
+type Folder interface {
+	GetVideoFolder() VideosImpl
 	AddIntoVideoFolder(fid string, vid string) error
 	RemoveFromVideoFolder(fid string, vid string) error
 }
 
-func (v *Video) GetVideoInfo(vid string) (Video, error) {
-	return *v, nil
+func (v VideoImpl) UploadVideo() bool {
+	return true
 }
-func (v *Videos) GetVideoFolder(fid string) (Videos, error) {
-	return *v, nil
+func (v VideoImpl) GetVideo() VideoImpl {
+	db.First(&v, v.Vid)
+	return v
 }
-func (v *Videos) AddIntoVideoFolder(fid string, vid string) error {
+func (v VideoImpl) DeleteVideo() {
+	db.Where("vid = ?", v.Vid).Delete(&v)
+}
+
+func (v VideosImpl) GetVideoFolder() VideosImpl {
+	db.Where("fid = ? AND uid = ?", v.Fid, v.Uid).First(&v)
+	return v
+}
+func (v VideosImpl) AddIntoVideoFolder(fid string, vid string) error {
 	return nil
 }
-func (v *Videos) RemoveFromVideoFolder(fid string, vid string) error {
+func (v VideosImpl) RemoveFromVideoFolder(fid string, vid string) error {
 	return nil
-}
-func (v *Video) GetComments(vid []string) ([]Comment, error) {
-	return v.Comments, nil
 }

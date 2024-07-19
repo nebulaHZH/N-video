@@ -14,7 +14,7 @@ var (
 
 // 包初始化函数，golang特性，每个包初始化的时候会自动执行init函数，这里用来初始化gorm。
 func init() {
-	dsn := "root:123456@tcp(localhost:32769)/nvideo"
+	dsn := "root:root@tcp(localhost:3306)/nvideo"
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
