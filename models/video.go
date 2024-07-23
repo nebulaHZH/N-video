@@ -1,54 +1,49 @@
 package models
 
-type VideoImpl struct {
-	Vid           string    `json:"vid"`           //视频id
-	Title         string    `json:"title"`         //标题
-	Uid           int       `json:"uid"`           //作者id
-	CreateTime    string    `json:"createTime"`    //创建时间
-	PlayUrl       string    `json:"playUrl"`       //视频链接
-	CoverUrl      string    `json:"coverUrl"`      //封面图片
-	FavoriteCount int       `json:"favoriteCount"` //点赞数
-	CommentCount  int       `json:"commentCount"`  //评论数
-	ViewCount     int64     `json:"viewCount"`     //浏览数
-	IsNeedVIP     bool      `json:"isNeedVip"`     //是否需要vip
-	Comments      []Comment `json:"comments"`      //评论实体
-}
-type VideosImpl struct {
-	Fid   string `json:"fid"`   //视频集id
-	Fname string `json:"fname"` //视频集名称
-	Uid   int    `json:"uid"`   //用户id
-	Vid   string `json:"vid"`   //视频id列表
+// video model
+type Video struct {
+	Vid           string `json:"vid"`           //视频id
+	Title         string `json:"title"`         //标题
+	Uid           int    `json:"uid"`           //作者id
+	Createtime    string `json:"createTime"`    //创建时间
+	Playurl       string `json:"playUrl"`       //视频链接
+	Coverurl      string `json:"coverUrl"`      //封面图片
+	Favoritecount int    `json:"favoriteCount"` //点赞数
+	Commentcount  int    `json:"commentCount"`  //评论数
+	Viewcount     int64  `json:"viewCount"`     //浏览数
+	Isneedvip     bool   `json:"isNeedVip"`     //是否需要vip
 }
 
-type Video interface {
-	GetVideo() VideoImpl
+// relation model
+type Relation struct {
+	Fid string `json:"fid"` //视频集id
+	Vid string `json:"vid"` //视频id
+}
+
+type VideoInter interface {
+	GetVideo() Video
 	UploadVideo() bool
 	DeleteVideo()
 }
-type Folder interface {
-	GetVideoFolder() VideosImpl
-	AddIntoVideoFolder(fid string, vid string) error
-	RemoveFromVideoFolder(fid string, vid string) error
+type RelationInter interface {
+	AddIntoVideoFolder(fid string, vid string)
+	RemoveFromVideoFolder(fid string, vid string)
 }
 
-func (v VideoImpl) UploadVideo() bool {
+func (v Video) UploadVideo() bool {
 	return true
 }
-func (v VideoImpl) GetVideo() VideoImpl {
+func (v Video) GetVideo() Video {
 	db.First(&v, v.Vid)
 	return v
 }
-func (v VideoImpl) DeleteVideo() {
+func (v Video) DeleteVideo() {
 	db.Where("vid = ?", v.Vid).Delete(&v)
 }
 
-func (v VideosImpl) GetVideoFolder() VideosImpl {
-	db.Where("fid = ? AND uid = ?", v.Fid, v.Uid).First(&v)
-	return v
+func (v Relation) AddIntoVideoFolder(fid string, vid string) {
+	db.Create(&v)
 }
-func (v VideosImpl) AddIntoVideoFolder(fid string, vid string) error {
-	return nil
-}
-func (v VideosImpl) RemoveFromVideoFolder(fid string, vid string) error {
-	return nil
+func (v Relation) RemoveFromVideoFolder(fid string, vid string) {
+	db.Delete(&v)
 }

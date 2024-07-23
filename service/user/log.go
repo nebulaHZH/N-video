@@ -12,7 +12,7 @@ func Login(uid int, password string) bool {
 
 // service: register account
 func Register(user models.User, password string) bool {
-	logImpl := models.LogImpl{Uid: user.Uid, Password: password}
+	logImpl := models.Log{Uid: user.Uid, Password: password}
 	var log models.Log = logImpl
 	res, l := user.AddUser(), log.Create()
 	if res.Uid != 0 && l.Uid != 0 {

@@ -19,16 +19,10 @@ type User struct {
 	Isvip        bool   `json:"isVIP"`        //是否为vip
 }
 type Person interface {
-	GetUserInfo(uid int) (User, error)                 //获取用户信息
-	UpdateUserInfo(user User) bool                     //更新用户信息
-	DeleteUser(uid int) bool                           //删除用户
-	AddUser(user User) bool                            //添加用户
-	GetAuthors(uid int) (AuthorImpl, error)            //获取作者信息
-	GetUserVideoFolder(fid int) ([]VideosImpl, error)  //获取用户视频文件夹
-	GetUserFollowers(uid int) ([]User, error)          //获取用户粉丝
-	GetUserFollowed(uid int) ([]User, error)           //获取用户关注
-	CreateVideoFolder(uid int, folder VideosImpl) bool //用户创建文件夹
-	GetHistory(uid int) ([]VideosImpl, error)          //获取用户历史记录
+	GetUserInfo(uid int) (User, error) //获取用户信息
+	UpdateUserInfo(user User) bool     //更新用户信息
+	DeleteUser(uid int) bool           //删除用户
+	AddUser(user User) bool            //添加用户
 }
 
 func init() {
@@ -60,20 +54,4 @@ func (u *User) DeleteUser(uid int) {
 func (u *User) AddUser() User {
 	db.Create(&u)
 	return *u
-}
-
-func (u *User) GetAuthors(uid int) (AuthorImpl, error) {
-	return AuthorImpl{}, nil
-}
-func (u *User) GetUserVideoFolder(fid int) ([]VideosImpl, error) {
-	return []VideosImpl{}, nil
-}
-func (u *User) GetUserFollowers(uid int) ([]User, error) {
-	return []User{}, nil
-}
-func (u *User) CreateVideoFolder(uid int, folder VideosImpl) bool {
-	return true
-}
-func (u *User) GetHistory(uid int) ([]VideosImpl, error) {
-	return []VideosImpl{}, nil
 }

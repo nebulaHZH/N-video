@@ -3,6 +3,7 @@ package video
 import "N-video/models"
 
 var (
-	folder models.Folder
-	video  models.Video
+	video    models.VideoInter
+	relation models.RelationInter
+	comment  models.CommentInter
 )

@@ -2,12 +2,12 @@ package history
 
 import "N-video/models"
 
-func GetBrowserHistory(uid int) []models.VideoImpl {
-	history = models.HistoryImpl{Uid: uid}
+func GetBrowserHistory(uid int) []models.Video {
+	history = models.History{Uid: uid}
 	res := history.Get()
-	var v_list []models.VideoImpl
+	var v_list []models.Video
 	for _, v := range res {
-		video := models.VideoImpl{Vid: v.Vid}
+		video := models.Video{Vid: v.Vid}
 		v_list = append(v_list, video.GetVideo())
 	}
 	return v_list
@@ -15,7 +15,7 @@ func GetBrowserHistory(uid int) []models.VideoImpl {
 
 func DeleteBrowserHistory(uid int, vid_list []string) bool {
 	for _, vid := range vid_list {
-		history = models.HistoryImpl{Uid: uid, Vid: vid}
+		history = models.History{Uid: uid, Vid: vid}
 		history.Delete()
 	}
 	return len(GetBrowserHistory(uid)) == 0

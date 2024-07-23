@@ -44,7 +44,7 @@ func GetFollower(uid int) []models.User {
 
 // service : cancel followed
 func CancelFollow(uid, fid int) bool {
-	followed = models.FollowedImpl{Uid: uid, Followed: fid}
+	followed = models.Followed{Uid: uid, Followed: fid}
 	followed.Delete()
 	// judge if success to cancel
 	res := followed.Get("uid", uid)

@@ -6,7 +6,7 @@ import (
 
 var (
 	person   models.Person
-	author   models.Author
-	followed models.Followed
-	log      models.Log
+	author   models.AuthorInter
+	followed models.FollowedInter
+	log      models.LogInter
 )

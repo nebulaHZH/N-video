@@ -1,19 +1,26 @@
 package models
 
-type FavoriteImpl struct {
+type Favorite struct {
 	Vid string `json:"vid"` //视频id
 	Uid int    `json:"uid"` //用户id
 }
 
-type Favorite interface {
-	Like(vid string, uid int)
-	Dislike(vid string, uid int)
+type FavoriteInter interface {
+	Like()
+	Dislike()
+	GetLike(vid string) Favorite
 }
 
-func (f FavoriteImpl) Like(vid string, uid int) {
+func (f Favorite) Like() {
 	db.Create(&f)
 }
 
-func (f FavoriteImpl) Dislike(vid string, uid int) {
-	db.Where("vid = ? AND uid = ?", vid, uid).Delete(&f)
+func (f Favorite) Dislike() {
+	db.Delete(&f)
+}
+
+func (f Favorite) GetLike(vid string) Favorite {
+	var res Favorite
+	db.First(&res, "vid = ?", vid)
+	return res
 }

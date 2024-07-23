@@ -4,12 +4,14 @@ import (
 	"N-video/models"
 )
 
-func GetVideoInfo(vid string) models.VideoImpl {
-	video = models.VideoImpl{Vid: vid}
+func GetVideoInfo(vid string, uid int) models.Video {
+	video = models.Video{Vid: vid}
+	var h models.History = models.History{Uid: uid, Vid: vid}
+	h.Add()
 	return video.GetVideo()
 }
 func DeleteVideo(vid string) bool {
-	video = models.VideoImpl{Vid: vid}
+	video = models.Video{Vid: vid}
 	video.DeleteVideo()
-	return GetVideoInfo(vid).Vid != ""
+	return video.GetVideo().Vid != ""
 }
